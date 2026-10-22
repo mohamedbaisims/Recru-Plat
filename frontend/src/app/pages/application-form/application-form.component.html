@@ -1,0 +1,265 @@
+
+<div class="form-page">
+  <div class="form-wrapper">
+
+    <!-- ── Progress bar ─────────────────────────────────────────────────────── -->
+    <div class="stepper">
+      <div class="stepper-item" [class.active]="step >= 1" [class.done]="step > 1">
+        <div class="stepper-circle">
+          <i class="bi" [class.bi-file-earmark-arrow-up]="step <= 1" [class.bi-check-lg]="step > 1"></i>
+        </div>
+        <span>Déposer CV</span>
+      </div>
+      <div class="stepper-line" [class.done]="step > 1"></div>
+
+      <div class="stepper-item" [class.active]="step >= 2" [class.done]="step > 2">
+        <div class="stepper-circle">
+          <i class="bi" [class.bi-pencil-square]="step <= 2" [class.bi-check-lg]="step > 2"></i>
+        </div>
+        <span>Compléter</span>
+      </div>
+      <div class="stepper-line" [class.done]="step > 2"></div>
+
+      <div class="stepper-item" [class.active]="step >= 3">
+        <div class="stepper-circle">
+          <i class="bi bi-send"></i>
+        </div>
+        <span>Soumettre</span>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         STEP 1 — CV Upload + OCR
+    ════════════════════════════════════════════════════════════════════════ -->
+    <div class="form-card" *ngIf="step === 1">
+      <div class="step-header">
+        <div class="step-icon-wrap">
+          <i class="bi bi-cpu step-icon"></i>
+        </div>
+        <h2>Déposez votre CV</h2>
+        <p class="step-sub">Notre système OCR analysera votre CV et remplira automatiquement le formulaire.</p>
+      </div>
+
+      <!-- Drop zone -->
+      <div class="cv-drop-zone" [class.has-file]="cvFile" (click)="triggerCvInput()">
+        <input type="file" #cvInput (change)="onCvSelected($event)" accept="application/pdf" style="display:none">
+        <div class="drop-content" *ngIf="!cvFile">
+          <i class="bi bi-cloud-arrow-up drop-icon"></i>
+          <p class="drop-title">Cliquez pour sélectionner votre CV</p>
+          <p class="drop-hint">Format PDF uniquement</p>
+        </div>
+        <div class="drop-content file-ready" *ngIf="cvFile">
+          <i class="bi bi-file-earmark-check drop-icon text-success"></i>
+          <p class="drop-title">{{ cvFile.name }}</p>
+          <p class="drop-hint">Prêt pour l'analyse</p>
+        </div>
+      </div>
+
+      <div *ngIf="ocrError" class="alert alert-warning mt-3 rounded-3">
+        <i class="bi bi-exclamation-triangle me-2"></i>{{ ocrError }}
+        <br><small>Vous pouvez quand même continuer et remplir manuellement.</small>
+      </div>
+
+      <!-- Analyze button -->
+      <div class="step-actions">
+        <button class="btn-analyze" (click)="analyzeCV()" [disabled]="!cvFile || isAnalyzing || ocrDone">
+          <span *ngIf="!isAnalyzing && !ocrDone">
+            <i class="bi bi-cpu me-2"></i>Analyser mon CV
+          </span>
+          <span *ngIf="isAnalyzing" class="analyzing-text">
+            <span class="spinner-border spinner-border-sm me-2"></span>Analyse en cours...
+          </span>
+          <span *ngIf="ocrDone && !isAnalyzing">
+            <i class="bi bi-check-circle me-2 text-success"></i>Analyse terminée !
+          </span>
+        </button>
+      </div>
+
+      <!-- OCR success badge -->
+      <div class="ocr-success" *ngIf="ocrDone">
+        <i class="bi bi-magic me-2"></i>
+        Les champs ont été pré-remplis automatiquement. Passage à l'étape suivante...
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         STEP 2 — Review fields + upload diploma & motivation
+    ════════════════════════════════════════════════════════════════════════ -->
+    <div class="form-card" *ngIf="step === 2">
+      <div class="step-header compact">
+        <h2><i class="bi bi-pencil-square me-2"></i>Vérifiez et complétez vos informations</h2>
+        <p class="step-sub">Les champs ont été pré-remplis par l'OCR. Corrigez si nécessaire.</p>
+      </div>
+
+      <!-- ─ Informations personnelles ───────────────────────────────────────── -->
+      <div class="section-title">
+        <i class="bi bi-person-circle me-2"></i>Informations personnelles
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Nom complet <span class="req">*</span></label>
+          <input type="text" class="form-control" [(ngModel)]="form.fullName" placeholder="Nom complet">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email <span class="req">*</span></label>
+          <input type="email" class="form-control" [(ngModel)]="form.email" placeholder="Email">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Téléphone</label>
+          <input type="text" class="form-control" [(ngModel)]="form.phoneNumber" placeholder="Téléphone">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Adresse</label>
+          <input type="text" class="form-control" [(ngModel)]="form.address" placeholder="Adresse">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Date de naissance</label>
+          <input type="date" class="form-control" [(ngModel)]="form.birthDate">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Lieu de naissance</label>
+          <input type="text" class="form-control" [(ngModel)]="form.birthPlace" placeholder="Lieu de naissance">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Nationalité</label>
+          <select class="form-select" [(ngModel)]="form.nationality">
+            <option value="" disabled>Choisissez</option>
+            <option *ngFor="let nat of nationalities" [value]="nat">{{ nat }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ─ Informations académiques ────────────────────────────────────────── -->
+      <div class="section-title mt-4">
+        <i class="bi bi-mortarboard me-2"></i>Formations & Compétences
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Diplôme</label>
+          <select class="form-select" [(ngModel)]="form.diploma">
+            <option value="" disabled>Choisissez</option>
+            <option *ngFor="let d of diplomas" [value]="d">{{ d }}</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Année d'obtention</label>
+          <select class="form-select" [(ngModel)]="form.diplomaYear">
+            <option value="" disabled>Choisissez</option>
+            <option *ngFor="let y of diplomaYears" [value]="y">{{ y }}</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Établissement</label>
+          <input type="text" class="form-control" [(ngModel)]="form.institution" placeholder="Établissement">
+        </div>
+        <div class="col-12">
+          <label class="form-label">Expérience professionnelle</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="form.experience" placeholder="Décrivez vos expériences..."></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Compétences techniques</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="form.technicalSkills" placeholder="Java, Angular, SQL..."></textarea>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Compétences personnelles</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="form.personalSkills" placeholder="Travail en équipe, rigueur..."></textarea>
+        </div>
+      </div>
+
+      <!-- ─ Documents ──────────────────────────────────────────────────────── -->
+      <div class="section-title mt-4">
+        <i class="bi bi-paperclip me-2"></i>Documents complémentaires
+      </div>
+      <div class="row g-3">
+        <!-- Diplôme PDF -->
+        <div class="col-md-6">
+          <div class="doc-card" [class.has-file]="diplomaFile" (click)="triggerDiplomaInput()">
+            <input type="file" #diplomaInput (change)="onDiplomaSelected($event)" accept="application/pdf" style="display:none">
+            <i class="bi" [class.bi-award]="!diplomaFile" [class.bi-file-earmark-check]="diplomaFile"
+               [class.text-primary]="!diplomaFile" [class.text-success]="diplomaFile"></i>
+            <div>
+              <p class="doc-label">Diplôme (PDF) <span class="req">*</span></p>
+              <p class="doc-file">{{ diplomaFile?.name || 'Cliquez pour sélectionner' }}</p>
+            </div>
+          </div>
+        </div>
+        <!-- Lettre de motivation PDF -->
+        <div class="col-md-6">
+          <div class="doc-card" [class.has-file]="motivationLetterFile" (click)="triggerMotivationInput()">
+            <input type="file" #motivationInput (change)="onMotivationSelected($event)" accept="application/pdf" style="display:none">
+            <i class="bi" [class.bi-envelope-paper]="!motivationLetterFile"
+               [class.bi-file-earmark-check]="motivationLetterFile"
+               [class.text-primary]="!motivationLetterFile" [class.text-success]="motivationLetterFile"></i>
+            <div>
+              <p class="doc-label">Lettre de motivation (PDF) <span class="req">*</span></p>
+              <p class="doc-file">{{ motivationLetterFile?.name || 'Cliquez pour sélectionner' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="submitError" class="alert alert-danger mt-3 rounded-3">{{ submitError }}</div>
+
+      <div class="step-actions mt-4">
+        <button class="btn-back" (click)="prevStep()">
+          <i class="bi bi-arrow-left me-1"></i> Retour
+        </button>
+        <button class="btn-next" (click)="nextStep()" [disabled]="!canProceedToStep3()">
+          Vérifier et soumettre <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════════
+         STEP 3 — Recap + Submit
+    ════════════════════════════════════════════════════════════════════════ -->
+    <div class="form-card" *ngIf="step === 3">
+      <div class="step-header">
+        <div class="step-icon-wrap success">
+          <i class="bi bi-send-check step-icon"></i>
+        </div>
+        <h2>Prêt à soumettre</h2>
+        <p class="step-sub">Vérifiez le récapitulatif avant d'envoyer votre candidature.</p>
+      </div>
+
+      <div class="recap-grid">
+        <div class="recap-item"><span class="recap-lbl">Nom</span><span class="recap-val">{{ form.fullName }}</span></div>
+        <div class="recap-item"><span class="recap-lbl">Email</span><span class="recap-val">{{ form.email }}</span></div>
+        <div class="recap-item"><span class="recap-lbl">Téléphone</span><span class="recap-val">{{ form.phoneNumber || '—' }}</span></div>
+        <div class="recap-item"><span class="recap-lbl">Diplôme</span><span class="recap-val">{{ form.diploma || '—' }}</span></div>
+        <div class="recap-item"><span class="recap-lbl">Établissement</span><span class="recap-val">{{ form.institution || '—' }}</span></div>
+        <div class="recap-item"><span class="recap-lbl">Nationalité</span><span class="recap-val">{{ form.nationality || '—' }}</span></div>
+      </div>
+
+      <div class="recap-files">
+        <div class="recap-file-badge" [class.ok]="cvFile">
+          <i class="bi bi-file-earmark-person me-2"></i>CV : {{ cvFile?.name || 'Manquant' }}
+        </div>
+        <div class="recap-file-badge" [class.ok]="diplomaFile">
+          <i class="bi bi-award me-2"></i>Diplôme : {{ diplomaFile?.name || 'Manquant' }}
+        </div>
+        <div class="recap-file-badge" [class.ok]="motivationLetterFile">
+          <i class="bi bi-envelope-paper me-2"></i>Motivation : {{ motivationLetterFile?.name || 'Manquant' }}
+        </div>
+      </div>
+
+      <div *ngIf="submitError" class="alert alert-danger rounded-3 mt-3">{{ submitError }}</div>
+      <div *ngIf="submitSuccess" class="alert alert-success rounded-3 mt-3">
+        <i class="bi bi-check-circle me-2"></i>{{ submitSuccess }}
+      </div>
+
+      <div class="step-actions mt-4">
+        <button class="btn-back" (click)="prevStep()" [disabled]="isSubmitting">
+          <i class="bi bi-arrow-left me-1"></i> Retour
+        </button>
+        <button class="btn-submit" (click)="submit()" [disabled]="!canSubmit() || isSubmitting">
+          <span *ngIf="!isSubmitting"><i class="bi bi-send me-2"></i>Envoyer ma candidature</span>
+          <span *ngIf="isSubmitting">
+            <span class="spinner-border spinner-border-sm me-2"></span>Envoi en cours...
+          </span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

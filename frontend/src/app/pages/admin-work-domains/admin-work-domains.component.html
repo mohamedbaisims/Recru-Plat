@@ -1,0 +1,102 @@
+<section class="domains-page">
+  <div class="domains-shell">
+    <div class="hero-panel">
+      <div>
+        <p class="eyebrow">Administration</p>
+        <h2>Domaines de travail</h2>
+        <p class="hero-copy">Ajoutez des mots-clés précis pour aider l'analyse de CV à proposer le bon domaine.</p>
+      </div>
+      <div class="hero-badge">
+        <span class="badge-value">{{ domains.length }}</span>
+        <span class="badge-label">domaines</span>
+      </div>
+    </div>
+
+    <div class="editor-panel">
+      <div class="field-grid">
+        <label class="field-block">
+          <span class="field-label">Nom du domaine</span>
+          <input [(ngModel)]="newDomain" placeholder="Ex: Data Science" class="form-control" />
+        </label>
+
+        <label class="field-block field-block-wide">
+          <span class="field-label">Mots-clés</span>
+          <textarea
+            [(ngModel)]="newKeywords"
+            rows="3"
+            placeholder="Ex: python, machine learning, data analysis, pandas, tableau"
+            class="form-control"></textarea>
+          <span class="field-hint">Séparez les mots-clés par des virgules.</span>
+        </label>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-banner">
+        {{ errorMessage }}
+      </div>
+
+      <button class="add-domain-btn" (click)="addDomain()">
+        <span class="material-icons">playlist_add</span>
+        Ajouter le domaine
+      </button>
+    </div>
+
+    <div class="list-panel">
+      <table class="table domains-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Mots-clés</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let domain of domains">
+            <td class="domain-name-cell">{{ domain.name }}</td>
+            <td>
+              <div *ngIf="editingDomainId === domain.id; else readKeywords" class="keywords-editor-inline">
+                <textarea
+                  [(ngModel)]="editingKeywords"
+                  rows="3"
+                  placeholder="Ex: spring boot, java, rest api"
+                  class="form-control"></textarea>
+                <span class="field-hint">Séparez les mots-clés par des virgules.</span>
+              </div>
+
+              <ng-template #readKeywords>
+              <span class="keywords-empty" *ngIf="!domain.keywords">Aucun mot-clé renseigné</span>
+              <div class="keywords-list" *ngIf="domain.keywords">
+                <span class="keyword-chip" *ngFor="let keyword of domain.keywords.split(',')">
+                  {{ keyword.trim() }}
+                </span>
+              </div>
+              </ng-template>
+            </td>
+            <td class="actions-stack">
+              <ng-container *ngIf="editingDomainId === domain.id; else defaultActions">
+                <button class="save-btn" (click)="saveKeywords(domain)">
+                  <span class="material-icons">save</span>
+                  Enregistrer
+                </button>
+                <button class="secondary-btn" (click)="cancelEditing()">
+                  <span class="material-icons">close</span>
+                  Annuler
+                </button>
+              </ng-container>
+
+              <ng-template #defaultActions>
+              <button class="secondary-btn" (click)="startEditing(domain)">
+                <span class="material-icons">edit</span>
+                Modifier mots-clés
+              </button>
+              <button class="delete-btn" (click)="deleteDomain(domain.id!)">
+                <span class="material-icons">delete</span>
+                Supprimer
+              </button>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

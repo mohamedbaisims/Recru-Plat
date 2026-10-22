@@ -1,0 +1,325 @@
+<div class="professional-dropdown">
+  <div
+    class="dropdown-trigger"
+    (click)="toggleDropdown()"
+    [class.active]="isOpen"
+    [class.has-selection]="selectedDomainName"
+  >
+    <div class="trigger-content">
+      <span class="selected-label" *ngIf="selectedDomainName; else placeholder">
+        <span class="domain-name">{{ selectedDomainName }}</span>
+        <span class="selection-hint">Domaine sélectionné</span>
+      </span>
+      <ng-template #placeholder>
+        <span class="placeholder">Choisir un domaine</span>
+      </ng-template>
+    </div>
+
+    <div class="dropdown-indicator">
+      <svg class="indicator-icon" [class.rotated]="isOpen" width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Overlay pour fermer en cliquant à l'extérieur -->
+  <div class="dropdown-overlay" *ngIf="isOpen" (click)="isOpen = false"></div>
+
+  <!-- Panel dropdown -->
+  <div class="dropdown-panel" [class.show]="isOpen">
+    <!-- En-tête -->
+    <div class="panel-header">
+      <h3 class="panel-title">Domaines de travail</h3>
+      <button class="close-btn" (click)="isOpen = false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="search-container">
+      <div class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <input
+        type="text"
+        placeholder="Rechercher un domaine..."
+        [(ngModel)]="searchTerm"
+        (input)="filterDomains()"
+        class="search-input"
+      >
+      <button class="clear-search" *ngIf="searchTerm" (click)="clearSearch()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Liste des domaines -->
+    <div class="domains-list" *ngIf="filteredDomains.length > 0">
+
+      <div
+        *ngFor="let domain of filteredDomains"
+        class="domain-item"
+        [class.selected]="selectedDomainId === domain.id"
+        (click)="selectDomain(domain)"
+      >
+        <div class="domain-info">
+          <span class="domain-name">{{ domain.name }}</span>
+        </div>
+        <div class="selection-indicator">
+          <div class="check-circle" *ngIf="selectedDomainId === domain.id">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- État vide -->
+    <div class="empty-state" *ngIf="filteredDomains.length === 0">
+      <div class="empty-icon">🔍</div>
+      <h4>Aucun domaine trouvé</h4>
+      <p>Aucun résultat pour "{{ searchTerm }}"</p>
+      <button class="reset-btn" (click)="clearSearch()">Réinitialiser la recherche</button>
+    </div>
+
+    <!-- Pied de panel -->
+    <div class="panel-footer">
+      <span class="count-text">{{ filteredDomains.length }} domaine(s)</span>
+    </div>
+  </div>
+</div>
+<div class="table-container" *ngIf="selectedDomainId && applications.length > 0">
+  <div class="table-header">
+    <h3 class="table-title">
+      Candidatures pour : <span class="domain-highlight">{{ selectedDomainName }}</span>
+    </h3>
+    <span class="result-count">{{ applications.length }} candidature(s) trouvée(s)</span>
+  </div>
+
+  <div class="table-wrapper">
+    <table class="professional-table">
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom Complet</th>
+        <th>Adresse</th>
+        <th>Diplôme</th>
+        <th>Expérience</th>
+        <th>Compétences Techniques</th>
+        <th>Compétences Personnelles</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let application of applications" class="table-row">
+        <td class="application-id">
+          <span class="id-badge">{{ application.id }}</span>
+        </td>
+        <td class="full-name">
+          <strong>{{ application.fullName }}</strong>
+        </td>
+        <td class="address">{{ application.address }}</td>
+        <td class="diploma">
+          <span class="diploma-badge">{{ application.diploma }}</span>
+        </td>
+        <td class="experience">{{ application.experience }}</td>
+        <td class="technical-skills">
+          <div class="skills-container">
+              <span class="skill-tag" *ngFor="let skill of getSkillsArray(application.technicalSkills)">
+                {{ skill }}
+              </span>
+          </div>
+        </td>
+        <td class="personal-skills">
+          <div class="skills-container">
+              <span class="skill-tag personal" *ngFor="let skill of getSkillsArray(application.personalSkills)">
+                {{ skill }}
+              </span>
+          </div>
+        </td>
+        <td class="status">
+          <span class="status-badge" [ngClass]="'status-' + (application.status?.toLowerCase() || 'pending')">
+            {{ application.status === 'INTERVIEW_SCHEDULED' ? '📅 Entretien programmé' : (application.status || 'En attente') }}
+          </span>
+        </td>
+        <td class="actions">
+          <button class="btn-interview" (click)="openInterviewModal(application)" title="Planifier un entretien">
+            📅 Entretien
+          </button>
+          <button class="btn-reject" (click)="openRejectModal(application)" title="Refuser la candidature">
+            ✕ Refuser
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 🆕 MODAL DE REJET -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="closeRejectModal()">
+  <div class="dialog-panel" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Refuser une candidature</h2>
+      <button class="modal-close" (click)="closeRejectModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <p class="candidate-info">
+        Vous êtes sur le point de refuser la candidature de :
+        <strong>{{ selectedApplication?.fullName }}</strong>
+      </p>
+
+      <div class="form-group">
+        <label for="rejection-reason">Raison du refus *</label>
+        <textarea
+          id="rejection-reason"
+          [(ngModel)]="rejectionReason"
+          placeholder="Expliquez la raison du refus (pour notifier le candidat)..."
+          rows="4"
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeRejectModal()" [disabled]="isSubmittingReject">
+        Annuler
+      </button>
+      <button class="btn-confirm btn-reject" (click)="submitReject()" [disabled]="isSubmittingReject">
+        <span *ngIf="!isSubmittingReject">Confirmer le refus</span>
+        <span *ngIf="isSubmittingReject">⏳ En cours...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 MODAL DE PLANIFICATION D'ENTRETIEN -->
+<div class="modal-overlay" *ngIf="showInterviewModal" (click)="closeInterviewModal()">
+  <div class="dialog-panel" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Planifier un entretien</h2>
+      <button class="modal-close" (click)="closeInterviewModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <p class="candidate-info">
+        Planifier un entretien avec :
+        <strong>{{ selectedApplication?.fullName }}</strong>
+        (<span class="email">{{ selectedApplication?.email }}</span>)
+      </p>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="interview-date">Date de l'entretien *</label>
+          <input
+            id="interview-date"
+            type="date"
+            [(ngModel)]="interviewForm.interviewDate"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="interview-time">Heure *</label>
+          <input
+            id="interview-time"
+            type="time"
+            [(ngModel)]="interviewForm.interviewTime"
+            class="form-control"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="interview-type">Type d'entretien</label>
+        <select [(ngModel)]="interviewForm.interviewType" id="interview-type" class="form-control">
+          <option value="Technique">Technique</option>
+          <option value="RH">RH</option>
+          <option value="Manager">Manager</option>
+          <option value="Final">Final</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="meeting-link">Lien de la réunion (optionnel)</label>
+        <input
+          id="meeting-link"
+          type="url"
+          [(ngModel)]="interviewForm.meetingLink"
+          placeholder="https://..."
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes (optionnelles)</label>
+        <textarea
+          id="notes"
+          [(ngModel)]="interviewForm.notes"
+          placeholder="Ajoutez des notes pour le candidat..."
+          rows="3"
+          class="form-control"
+        ></textarea>
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeInterviewModal()" [disabled]="isSubmittingInterview">
+        Annuler
+      </button>
+      <button class="btn-confirm btn-interview" (click)="submitInterview()" [disabled]="isSubmittingInterview">
+        <span *ngIf="!isSubmittingInterview">Planifier l'entretien</span>
+        <span *ngIf="isSubmittingInterview">⏳ En cours...</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- État vide -->
+<div class="empty-state-container" *ngIf="selectedDomainId && applications.length === 0">
+  <div class="empty-state-content">
+    <div class="empty-icon">📋</div>
+    <h3>Aucune candidature trouvée</h3>
+    <p>Aucune candidature n'a été trouvée pour le domaine "{{ selectedDomainName }}"</p>
+    <button class="retry-btn" (click)="loadApplications()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M23 4v6h-6M1 20v-6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Réessayer
+    </button>
+  </div>
+</div>
+
+<!-- État initial -->
+<div class="initial-state" *ngIf="!selectedDomainId">
+  <div class="initial-state-content">
+    <div class="state-icon">👆</div>
+    <h3>Sélectionnez un domaine</h3>
+    <p>Veuillez choisir un domaine de travail dans la liste déroulante pour afficher les candidatures correspondantes</p>
+  </div>
+</div>

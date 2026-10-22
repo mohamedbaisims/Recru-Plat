@@ -1,0 +1,160 @@
+<div class="workspace-page admin-dashboard-page">
+  <section class="workspace-hero">
+    <div class="workspace-hero__content">
+      <div class="workspace-hero__text">
+        <span class="workspace-eyebrow">Pilotage administrateur</span>
+        <h1 class="workspace-title">Vue globale de la plateforme ZimApply.</h1>
+        <p class="workspace-subtitle">
+          Supervisez les candidatures, les utilisateurs et les domaines de travail depuis un tableau de bord unifié.
+        </p>
+      </div>
+
+      <div class="workspace-hero__aside" *ngIf="stats && !isLoading">
+        <div class="workspace-badge-card">
+          <strong>{{ stats.totalCandidatures }}</strong>
+          <span>Candidatures enregistrées</span>
+        </div>
+        <div class="workspace-badge-card">
+          <strong>{{ stats.totalManagers }}</strong>
+          <span>Managers actifs dans la plateforme</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div *ngIf="isLoading" class="workspace-card workspace-loading-card">
+    <div class="workspace-loading">Chargement des statistiques...</div>
+  </div>
+
+  <div *ngIf="errorMessage" class="workspace-alert workspace-alert--error admin-dashboard-page__alert">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="stats && !isLoading" class="workspace-grid">
+    <section class="workspace-grid workspace-grid--metrics">
+      <article class="workspace-metric" style="--metric-color: #0ea5e9;">
+        <span class="workspace-metric__label">Candidatures</span>
+        <p class="workspace-metric__value">{{ stats.totalCandidatures }}</p>
+        <p class="workspace-metric__hint">Total des dossiers soumis sur la plateforme.</p>
+      </article>
+
+      <article class="workspace-metric" style="--metric-color: #14b8a6;">
+        <span class="workspace-metric__label">Candidats</span>
+        <p class="workspace-metric__value">{{ stats.totalCandidats }}</p>
+        <p class="workspace-metric__hint">Utilisateurs candidats actifs dans ZimApply.</p>
+      </article>
+
+      <article class="workspace-metric" style="--metric-color: #f59e0b;">
+        <span class="workspace-metric__label">Managers</span>
+        <p class="workspace-metric__value">{{ stats.totalManagers }}</p>
+        <p class="workspace-metric__hint">Comptes disposant d'un accès de traitement.</p>
+      </article>
+
+      <article class="workspace-metric" style="--metric-color: #ef4444;">
+        <span class="workspace-metric__label">Domaines</span>
+        <p class="workspace-metric__value">{{ stats.totalWorkDomains }}</p>
+        <p class="workspace-metric__hint">Domaines de travail configurés.</p>
+      </article>
+    </section>
+
+    <section class="workspace-card workspace-card--soft">
+      <div class="workspace-card__body">
+        <div class="workspace-card__header">
+          <div>
+            <h2>État des candidatures</h2>
+            <p>Répartition actuelle des candidatures par statut métier.</p>
+          </div>
+
+          <button class="workspace-button workspace-button--primary" (click)="loadStatistics()">
+            Rafraîchir les statistiques
+          </button>
+        </div>
+
+        <div class="workspace-grid workspace-grid--metrics admin-dashboard-page__status-grid">
+          <article class="workspace-metric" style="--metric-color: #f59e0b;">
+            <span class="workspace-metric__label">En attente</span>
+            <p class="workspace-metric__value">{{ stats.pendingCandidatures }}</p>
+            <p class="workspace-metric__hint">Candidatures encore en cours de traitement.</p>
+          </article>
+
+          <article class="workspace-metric" style="--metric-color: #22c55e;">
+            <span class="workspace-metric__label">Acceptées</span>
+            <p class="workspace-metric__value">{{ stats.acceptedCandidatures }}</p>
+            <p class="workspace-metric__hint">Dossiers validés ou entretien planifié.</p>
+          </article>
+
+          <article class="workspace-metric" style="--metric-color: #ef4444;">
+            <span class="workspace-metric__label">Rejetées</span>
+            <p class="workspace-metric__value">{{ stats.rejectedCandidatures }}</p>
+            <p class="workspace-metric__hint">Candidatures clôturées après analyse.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="workspace-grid workspace-grid--two">
+      <section class="workspace-card workspace-card--soft">
+        <div class="workspace-card__body">
+          <div class="workspace-card__header">
+            <div>
+              <h2>Répartition par domaine</h2>
+              <p>Visualisation du volume de candidatures selon chaque domaine de travail.</p>
+            </div>
+          </div>
+
+          <div *ngIf="domainChartData.length > 0; else noDomains" class="workspace-list admin-dashboard-page__chart-list">
+            <div *ngFor="let domain of domainChartData; let i = index" class="workspace-row admin-dashboard-page__chart-row">
+              <div class="admin-dashboard-page__chart-meta">
+                <div class="workspace-row__title">{{ domain.name }}</div>
+                <div class="workspace-progress admin-dashboard-page__progress">
+                  <span [style.width.%]="getBarWidth(domain.count)" [style.background]="getChartColor(i)"></span>
+                </div>
+              </div>
+              <span class="workspace-chip">{{ domain.count }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace-card">
+        <div class="workspace-card__body">
+          <div class="workspace-card__header">
+            <div>
+              <h3>Détail chiffré</h3>
+              <p>Part de chaque domaine dans le total des candidatures.</p>
+            </div>
+          </div>
+
+          <div *ngIf="domainChartData.length > 0; else noDomainsTable" class="admin-dashboard-page__table-wrap">
+            <table class="workspace-table">
+              <thead>
+                <tr>
+                  <th>Domaine</th>
+                  <th>Volume</th>
+                  <th>Part</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let domain of domainChartData">
+                  <td>{{ domain.name }}</td>
+                  <td><span class="workspace-chip">{{ domain.count }}</span></td>
+                  <td>
+                    {{ stats.totalCandidatures ? ((domain.count / stats.totalCandidatures) * 100).toFixed(1) : '0.0' }}%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <ng-template #noDomains>
+    <div class="workspace-empty">Aucun domaine de travail créé pour le moment.</div>
+  </ng-template>
+
+  <ng-template #noDomainsTable>
+    <div class="workspace-empty">Aucune donnée à afficher pour les domaines.</div>
+  </ng-template>
+</div>

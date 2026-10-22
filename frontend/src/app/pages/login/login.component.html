@@ -1,0 +1,146 @@
+<div class="auth-shell" *ngIf="!authResponse.mfaEnabled">
+  <div class="auth-shell__grid">
+    <section class="auth-showcase">
+      <img src="assets/images/background.jpg" alt="Illustration de recrutement" class="auth-showcase__image" />
+      <div class="auth-showcase__veil"></div>
+
+      <div class="auth-showcase__content">
+        <div class="auth-showcase__headline">
+          <span class="auth-showcase__eyebrow">Plateforme de recrutement</span>
+          <h1>Connectez-vous et pilotez vos candidatures avec clarté.</h1>
+          <p>Accédez rapidement à votre espace de travail.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <img src="assets/images/logo.jpg" alt="Logo" class="auth-brand__logo" />
+          <div class="auth-brand__text">
+            <h2>ZimApply</h2>
+          </div>
+        </div>
+
+        <div class="auth-card__header">
+          <h3>Connexion</h3>
+          <p>Accédez à votre espace.</p>
+        </div>
+
+        <form #loginForm="ngForm" (ngSubmit)="authenticate()" class="auth-form" novalidate>
+          <label class="auth-field">
+            <span class="auth-field__label">Adresse email</span>
+            <input
+              type="email"
+              placeholder="nom@exemple.com"
+              name="email"
+              required
+              [(ngModel)]="authRequest.email"
+              #emailModel="ngModel"
+            />
+          </label>
+          <div *ngIf="emailModel.invalid && emailModel.touched" class="auth-error">
+            <small *ngIf="emailModel.errors?.['required']">Email requis</small>
+            <small *ngIf="emailModel.errors?.['email']">Format email invalide</small>
+          </div>
+
+          <label class="auth-field">
+            <span class="auth-field__label">Mot de passe</span>
+            <input
+              type="password"
+              placeholder="Saisissez votre mot de passe"
+              name="password"
+              required
+              minlength="6"
+              [(ngModel)]="authRequest.password"
+              #passModel="ngModel"
+            />
+          </label>
+          <div *ngIf="passModel.invalid && passModel.touched" class="auth-error">
+            <small *ngIf="passModel.errors?.['required']">Mot de passe requis</small>
+            <small *ngIf="passModel.errors?.['minlength']">6 caractères minimum</small>
+          </div>
+
+          <div *ngIf="errorMessage" class="auth-alert auth-alert--error">
+            {{ errorMessage }}
+          </div>
+
+          <div class="auth-helper-row auth-helper-row--end">
+            <a (click)="navigateToForgotPassword()">Mot de passe oublié ?</a>
+          </div>
+
+          <button type="submit" class="auth-button" [disabled]="loginForm.invalid">Se connecter</button>
+
+          <p class="auth-footer">
+            Vous n'avez pas de compte ? <a class="auth-link" routerLink="/register">Créer un compte</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="auth-shell" *ngIf="authResponse.mfaEnabled">
+  <div class="auth-shell__grid">
+    <section class="auth-showcase">
+      <img src="assets/images/background.jpg" alt="Illustration de sécurité" class="auth-showcase__image" />
+      <div class="auth-showcase__veil"></div>
+
+      <div class="auth-showcase__content">
+        <div class="auth-showcase__headline">
+          <span class="auth-showcase__eyebrow">Vérification MFA</span>
+          <h1>Un dernier contrôle avant l'accès à votre espace.</h1>
+          <p>La double authentification protège les accès sensibles et sécurise les opérations de recrutement.</p>
+        </div>
+
+        <div class="auth-showcase__footer">
+          <div class="auth-metric">
+            <strong>Code unique</strong>
+            <span>Vérification rapide par code temporaire.</span>
+          </div>
+          <div class="auth-metric">
+            <strong>Accès protégé</strong>
+            <span>Réduction des risques d'accès non autorisé.</span>
+          </div>
+          <div class="auth-metric">
+            <strong>Validation simple</strong>
+            <span>Continuez la connexion en quelques secondes.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card auth-card--compact">
+        <div class="auth-brand">
+          <img src="assets/images/logo.jpg" alt="Logo" class="auth-brand__logo" />
+          <div class="auth-brand__text">
+            <h2>ZimApply</h2>
+          </div>
+        </div>
+
+        <div class="auth-card__header">
+          <h3>Vérification</h3>
+          <p>Saisissez le code à 6 chiffres reçu pour terminer l'authentification.</p>
+        </div>
+
+        <form (ngSubmit)="verifyCode()" class="auth-form">
+          <label class="auth-field">
+            <span class="auth-field__label">Code de vérification</span>
+            <input
+              type="text"
+              placeholder="Entrez le code à 6 chiffres"
+              required
+              [(ngModel)]="otpCode"
+              name="otpCode"
+            />
+          </label>
+
+          <div class="auth-note">Assurez-vous d'utiliser le dernier code généré avant expiration.</div>
+
+          <button type="submit" class="auth-button" [disabled]="otpCode?.length < 6">Vérifier le code</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>

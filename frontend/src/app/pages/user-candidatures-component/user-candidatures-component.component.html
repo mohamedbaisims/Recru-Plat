@@ -1,0 +1,179 @@
+<div class="container my-5">
+  <h2 class="text-center mb-4 text-primary">Mes Candidatures</h2>
+
+  <div *ngIf="successMessage" class="alert alert-success rounded-4 shadow-sm mb-4 text-center">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger rounded-4 shadow-sm mb-4 text-center">
+    {{ errorMessage }}
+  </div>
+
+  <div class="table-responsive shadow-sm rounded-4">
+    <table class="table table-hover align-middle text-center table-bordered bg-white">
+      <thead class="table-primary text-dark">
+      <tr>
+        <th>Nom complet</th>
+        <th>Adresse</th>
+        <th>Diplôme</th>
+        <th>Institution</th>
+        <th>Expérience</th>
+        <th>Comp. Techniques</th>
+        <th>Comp. Personnelles</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let app of applications">
+        <td>{{ app.fullName }}</td>
+        <td>{{ app.address }}</td>
+        <td>{{ app.diploma }}</td>
+        <td>{{ app.institution }}</td>
+        <td>{{ app.experience }}</td>
+        <td>{{ app.technicalSkills }}</td>
+        <td>{{ app.personalSkills }}</td>
+        <td class="actions-cell">
+          <div class="action-buttons">
+            <button class="action-btn action-btn--edit" (click)="editApplication(app)">
+              <span class="action-btn__icon">✏️</span>
+              <span>Modifier</span>
+            </button>
+            <button class="action-btn action-btn--delete" (click)="deleteApplication(app.id)">
+              <span class="action-btn__icon">🗑️</span>
+              <span>Supprimer</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="applications.length === 0" class="text-center text-muted mt-4">
+    😕 Aucune candidature enregistrée.
+  </p>
+</div>
+
+<div class="edit-modal-overlay" *ngIf="showEditModal" (click)="closeEditModal()">
+  <div class="edit-modal" (click)="$event.stopPropagation()">
+    <div class="edit-modal__header">
+      <div>
+        <h3>Modifier la candidature</h3>
+        <p>Mettez à jour les informations principales de votre dossier.</p>
+      </div>
+      <button type="button" class="edit-modal__close" (click)="closeEditModal()">×</button>
+    </div>
+
+    <div class="edit-modal__body">
+      <div class="edit-grid">
+        <label class="edit-field">
+          <span>Nom complet</span>
+          <input type="text" [(ngModel)]="editForm.fullName" name="editFullName" />
+        </label>
+
+        <label class="edit-field">
+          <span>Adresse</span>
+          <input type="text" [(ngModel)]="editForm.address" name="editAddress" />
+        </label>
+
+        <label class="edit-field">
+          <span>Téléphone</span>
+          <input type="text" [(ngModel)]="editForm.phoneNumber" name="editPhoneNumber" />
+        </label>
+
+        <label class="edit-field">
+          <span>Email</span>
+          <input type="email" [(ngModel)]="editForm.email" name="editEmail" />
+        </label>
+
+        <label class="edit-field">
+          <span>Date de naissance</span>
+          <input type="date" [(ngModel)]="editForm.birthDate" name="editBirthDate" />
+        </label>
+
+        <label class="edit-field">
+          <span>Lieu de naissance</span>
+          <input type="text" [(ngModel)]="editForm.birthPlace" name="editBirthPlace" />
+        </label>
+
+        <label class="edit-field">
+          <span>Nationalité</span>
+          <select [(ngModel)]="editForm.nationality" name="editNationality">
+            <option value="">Sélectionner</option>
+            <option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality }}</option>
+          </select>
+        </label>
+
+        <label class="edit-field">
+          <span>Diplôme</span>
+          <select [(ngModel)]="editForm.diploma" name="editDiploma">
+            <option value="">Sélectionner</option>
+            <option *ngFor="let diploma of diplomas" [value]="diploma">{{ diploma }}</option>
+          </select>
+        </label>
+
+        <label class="edit-field">
+          <span>Année du diplôme</span>
+          <select [(ngModel)]="editForm.diplomaYear" name="editDiplomaYear">
+            <option value="">Sélectionner</option>
+            <option *ngFor="let year of diplomaYears" [value]="year">{{ year }}</option>
+          </select>
+        </label>
+
+        <label class="edit-field">
+          <span>Établissement</span>
+          <input type="text" [(ngModel)]="editForm.institution" name="editInstitution" />
+        </label>
+      </div>
+
+      <label class="edit-field edit-field--full">
+        <span>Expérience</span>
+        <textarea [(ngModel)]="editForm.experience" name="editExperience" rows="3"></textarea>
+      </label>
+
+      <label class="edit-field edit-field--full">
+        <span>Compétences techniques</span>
+        <textarea [(ngModel)]="editForm.technicalSkills" name="editTechnicalSkills" rows="3"></textarea>
+      </label>
+
+      <label class="edit-field edit-field--full">
+        <span>Compétences personnelles</span>
+        <textarea [(ngModel)]="editForm.personalSkills" name="editPersonalSkills" rows="3"></textarea>
+      </label>
+
+      <div class="edit-files">
+        <div class="edit-files__header">
+          <h4>Documents PDF</h4>
+          <p>Choisissez un nouveau fichier uniquement si vous souhaitez remplacer l'actuel.</p>
+        </div>
+
+        <div class="edit-grid">
+          <label class="edit-file-card">
+            <span class="edit-file-card__label">CV</span>
+            <span class="edit-file-card__name">{{ getSelectedFileName('cv') }}</span>
+            <input type="file" accept="application/pdf" (change)="onEditFileSelected($event, 'cv')" />
+          </label>
+
+          <label class="edit-file-card">
+            <span class="edit-file-card__label">Lettre de motivation</span>
+            <span class="edit-file-card__name">{{ getSelectedFileName('motivation') }}</span>
+            <input type="file" accept="application/pdf" (change)="onEditFileSelected($event, 'motivation')" />
+          </label>
+
+          <label class="edit-file-card edit-file-card--full">
+            <span class="edit-file-card__label">Diplôme</span>
+            <span class="edit-file-card__name">{{ getSelectedFileName('diploma') }}</span>
+            <input type="file" accept="application/pdf" (change)="onEditFileSelected($event, 'diploma')" />
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="edit-modal__footer">
+      <button type="button" class="modal-btn modal-btn--secondary" (click)="closeEditModal()">Annuler</button>
+      <button type="button" class="modal-btn modal-btn--primary" (click)="saveApplicationChanges()" [disabled]="isSaving">
+        {{ isSaving ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+      </button>
+    </div>
+  </div>
+</div>

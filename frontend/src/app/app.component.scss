@@ -1,0 +1,69 @@
+/* ====== Layout principal ====== */
+
+/* Navbar fixée en haut */
+app-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  z-index: 100;
+}
+
+/* Sidebar fixée à gauche sous la navbar */
+app-sidebar {
+  position: fixed;
+  top: 64px; /* juste en dessous de la navbar */
+  left: 0;
+  bottom: 0;
+  width: 240px; /* même largeur que ta marge-left */
+  z-index: 90;
+  transition: width 0.3s ease;
+}
+
+/* Quand la sidebar est fermée */
+app-sidebar.closed {
+  width: 70px;
+}
+
+/* ====== Contenu principal ====== */
+.main-content {
+  margin-top: 64px; /* pour ne pas passer sous la navbar */
+  margin-left: 260px; /* espace pour la sidebar */
+  padding: 2rem; /* meilleur confort visuel */
+  min-height: calc(100vh - 64px);
+  background:
+    radial-gradient(circle at top left, rgba(20, 184, 166, 0.08), transparent 22%),
+    linear-gradient(180deg, #f8fafc 0%, #f0fdfa 100%);
+  transition: margin-left 0.3s ease;
+
+  &.expanded {
+    margin-left: 70px; /* réduit quand la sidebar est fermée */
+  }
+
+  &.no-layout {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* ====== Responsive mobile ====== */
+@media (max-width: 768px) {
+  app-sidebar {
+    position: fixed;
+    top: 64px;
+    left: -240px;
+    width: 240px;
+    transition: left 0.3s ease;
+    z-index: 120;
+  }
+
+  app-sidebar.open {
+    left: 0; /* sidebar visible quand ouverte */
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding: 1rem;
+  }
+}

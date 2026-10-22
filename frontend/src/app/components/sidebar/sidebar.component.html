@@ -1,0 +1,168 @@
+<div class="sidebar" [ngClass]="{ 'closed': !isOpen }">
+  <div class="sidebar-header">
+    <div class="sidebar-user">
+      <div class="user-avatar-large">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="user-info" *ngIf="isOpen">
+        <div class="user-name">{{ getUserName() }}</div>
+        <div class="user-role">{{ getUserRoleDisplay() }}</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+
+      <!-- Menu ADMIN -->
+      <ng-container *ngIf="userRole === 'ADMIN'">
+        <li class="nav-section" *ngIf="isOpen">
+          <span class="section-label">Administration</span>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 13h8V3H3v10zM13 21h8V11h-8v10zM13 3v6h8V3h-8zM3 21h8v-6H3v6z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">📊 Dashboard</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/admin/work-domains" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Domaines de travail</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/create-manager" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M20 8v6M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Créer Manager</span>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Menu CANDIDAT (USER) -->
+      <ng-container *ngIf="userRole === 'USER'">
+        <li class="nav-section" *ngIf="isOpen">
+          <span class="section-label">Candidat</span>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/application-form" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 19l7-7 3 3-7 7-3-3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 2l7.586 7.586" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Formulaire de candidature</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/my-candidatures" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Mes candidatures</span>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Menu MANAGER -->
+      <ng-container *ngIf="userRole === 'MANAGER'">
+        <li class="nav-section" *ngIf="isOpen">
+          <span class="section-label">Manager</span>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/manager-dashboard" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M3 13h8V3H3v10zM13 21h8V11h-8v10zM13 3v6h8V3h-8zM3 21h8v-6H3v6z"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/manager/candidates-by-domain" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Candidats par domaine</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a routerLink="/manager-applications" class="nav-link" routerLinkActive="active">
+            <div class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="nav-text" *ngIf="isOpen">Gestion des candidatures</span>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Menu commun à tous les rôles -->
+      <li class="nav-section" *ngIf="isOpen && userRole !== 'USER' && userRole !== 'MANAGER'">
+        <span class="section-label">Général</span>
+      </li>
+
+      <li class="nav-item" *ngIf="userRole !== 'USER' && userRole !== 'MANAGER'">
+        <a
+          [routerLink]="userRole === 'ADMIN' ? '/admin/settings' : '/settings'"
+          class="nav-link"
+          routerLinkActive="active"
+        >
+          <div class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="nav-text" *ngIf="isOpen">Paramètres</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer" *ngIf="isOpen">
+    <div class="app-version">v1.0.0</div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+<ng-container *ngIf="shouldShowLayout()">
+  <app-navbar [toggleSidebar]="toggleSidebar"></app-navbar>
+  <app-sidebar [isOpen]="isSidebarOpen"></app-sidebar>
+</ng-container>
+
+<div class="main-content" [class.no-layout]="!shouldShowLayout()" [class.expanded]="shouldShowLayout() && !isSidebarOpen">
+  <router-outlet></router-outlet>
+</div>

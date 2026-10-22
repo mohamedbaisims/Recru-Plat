@@ -1,0 +1,484 @@
+.admin-settings-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  .settings-header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    .settings-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .settings-subtitle {
+      font-size: 1.1rem;
+      color: #6b7280;
+    }
+  }
+
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .settings-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    overflow: visible;
+
+    .card-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #f1f5f9;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+
+        .title-icon {
+          color: #3b82f6;
+        }
+      }
+
+      .managers-count {
+        background: #3b82f6;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+  }
+
+  // Styles pour le dropdown des managers
+  .manager-dropdown {
+    position: relative;
+    width: 100%;
+
+    .dropdown-trigger {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: #cbd5e1;
+      }
+
+      &.active {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .selected-manager {
+        font-weight: 500;
+        color: #1f2937;
+
+        &:not(:has(text)) {
+          color: #9ca3af;
+        }
+      }
+
+      .dropdown-icon {
+        color: #6b7280;
+        transition: transform 0.3s ease;
+
+        &.rotated {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    .dropdown-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 40;
+    }
+
+    .dropdown-panel {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      z-index: 50;
+      margin-top: 4px;
+      overflow: hidden;
+
+      .search-container {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f1f5f9;
+
+        .search-input {
+          width: 100%;
+          padding: 0.5rem 0.75rem;
+          border: 1px solid #e2e8f0;
+          border-radius: 6px;
+          font-size: 0.875rem;
+
+          &:focus {
+            outline: none;
+            border-color: #3b82f6;
+          }
+        }
+      }
+
+      .dropdown-list {
+        max-height: 200px;
+        overflow-y: auto;
+
+        .dropdown-item {
+          padding: 0.75rem 1rem;
+          cursor: pointer;
+          border-bottom: 1px solid #f8fafc;
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background: #f8fafc;
+          }
+
+          &.selected {
+            background: #eff6ff;
+          }
+
+          .manager-info {
+            display: flex;
+            flex-direction: column;
+
+            .manager-name {
+              font-weight: 500;
+              color: #1f2937;
+              font-size: 0.875rem;
+            }
+
+            .manager-email {
+              font-size: 0.75rem;
+              color: #6b7280;
+            }
+          }
+        }
+      }
+
+      .dropdown-empty {
+        padding: 2rem;
+        text-align: center;
+        color: #6b7280;
+        font-style: italic;
+      }
+    }
+  }
+
+  // Styles du formulaire
+  .form-section {
+    margin-bottom: 2rem;
+
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .password-form {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      .form-label {
+        display: block;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+      }
+
+      .password-input-container {
+        position: relative;
+
+        .form-input {
+          width: 100%;
+          padding: 0.875rem 3rem 0.875rem 1rem;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 8px;
+          font-size: 0.875rem;
+          transition: all 0.3s ease;
+
+          &:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+          }
+
+          &:invalid {
+            border-color: #ef4444;
+          }
+        }
+
+        .password-toggle {
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #6b7280;
+          cursor: pointer;
+          padding: 0.25rem;
+          border-radius: 4px;
+          transition: color 0.2s ease;
+
+          &:hover {
+            color: #374151;
+          }
+        }
+      }
+
+      .form-hint {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+      }
+
+      .error-message {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        &.btn-primary {
+          background: #3b82f6;
+          color: white;
+
+          &:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-1px);
+          }
+        }
+
+        &.btn-secondary {
+          background: #f3f4f6;
+          color: #374151;
+
+          &:hover:not(:disabled) {
+            background: #e5e7eb;
+          }
+        }
+
+        .loading-spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid transparent;
+          border-top: 2px solid currentColor;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+      }
+    }
+  }
+
+  .status-message {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    margin-top: 1rem;
+
+    &.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    &.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+  }
+
+  // Liste des managers
+  .managers-list {
+    .manager-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: #f8fafc;
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .manager-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+        flex-shrink: 0;
+      }
+
+      .manager-details {
+        flex: 1;
+
+        .manager-name {
+          font-weight: 500;
+          color: #1f2937;
+          margin-bottom: 0.25rem;
+        }
+
+        .manager-email {
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+      }
+
+      .btn-edit {
+        background: #f3f4f6;
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem;
+        color: #374151;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          background: #e5e7eb;
+          transform: translateY(-1px);
+        }
+      }
+    }
+
+    .empty-state {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: #6b7280;
+
+      .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .admin-settings-container {
+    padding: 1rem;
+
+    .settings-header {
+      margin-bottom: 2rem;
+
+      .settings-title {
+        font-size: 2rem;
+      }
+    }
+
+    .settings-card .card-body {
+      padding: 1.5rem;
+    }
+
+    .password-form .form-actions {
+      flex-direction: column;
+    }
+  }
+}

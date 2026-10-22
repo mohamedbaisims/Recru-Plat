@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Builds
+target/
+dist/
+frontend/.angular/
+out-tsc/
+
+# Secrets locaux
+application-local.properties
+.env
+
+# Logs / crash dumps JVM
+*.log
+hs_err_pid*
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.github/java-upgrade/
+
+# OS
+.DS_Store
+Thumbs.db

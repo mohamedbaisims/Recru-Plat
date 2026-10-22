@@ -1,0 +1,39 @@
+@import '../../../styles/workspace-shell';
+
+.manager-dashboard-page {
+  &__loading-card {
+    margin-top: 16px;
+  }
+
+  &__clickable {
+    cursor: pointer;
+  }
+
+  &__clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 38px rgba(15, 23, 42, 0.1);
+  }
+
+  &__domain-row {
+    align-items: center;
+  }
+
+  &__domain-meta {
+    flex: 1;
+  }
+
+  &__domain-progress {
+    margin-top: 10px;
+  }
+
+  &__cta-block {
+    display: grid;
+    gap: 18px;
+  }
+
+  &__cta-block p {
+    color: #64748b;
+    line-height: 1.8;
+    margin: 0;
+  }
+}

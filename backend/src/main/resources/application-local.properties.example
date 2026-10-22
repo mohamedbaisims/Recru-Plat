@@ -1,0 +1,8 @@
+# Copier ce fichier en application-local.properties et renseigner vos valeurs.
+# Clé HMAC-SHA256 en hexadécimal (64 caractères), ex : openssl rand -hex 32
+spring.application.security.jwt.secret-key=CHANGE_ME
+# Compte Gmail + mot de passe d'application (https://myaccount.google.com/apppasswords)
+spring.mail.username=votre.email@gmail.com
+spring.mail.password=CHANGE_ME
+# Optionnel : surcharger la connexion MySQL
+# spring.datasource.password=

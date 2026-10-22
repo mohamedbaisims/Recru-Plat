@@ -1,0 +1,93 @@
+<div *ngIf="loading" class="workspace-card manager-dashboard-page__loading-card">
+  <div class="workspace-loading">Chargement du tableau de bord manager...</div>
+</div>
+
+<div *ngIf="!loading" class="workspace-page manager-dashboard-page">
+  <section class="workspace-hero">
+    <div class="workspace-hero__content">
+      <div class="workspace-hero__text">
+        <span class="workspace-eyebrow">Espace manager</span>
+        <h1 class="workspace-title">Suivez les candidatures à traiter en un coup d'œil.</h1>
+        <p class="workspace-subtitle">
+          Identifiez rapidement les dossiers en attente, la répartition par domaine et l'action prioritaire à engager.
+        </p>
+      </div>
+
+      <div class="workspace-hero__aside">
+        <div class="workspace-badge-card">
+          <strong>{{ stats.total || 0 }}</strong>
+          <span>Total des candidatures gérées</span>
+        </div>
+        <div class="workspace-badge-card">
+          <strong>{{ stats.unassigned || 0 }}</strong>
+          <span>Dossiers à examiner en priorité</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="workspace-grid">
+    <section class="workspace-grid workspace-grid--metrics">
+      <article class="workspace-metric" style="--metric-color: #0ea5e9;">
+        <span class="workspace-metric__label">Total candidatures</span>
+        <p class="workspace-metric__value">{{ stats.total || 0 }}</p>
+        <p class="workspace-metric__hint">Ensemble des candidatures visibles pour le manager.</p>
+      </article>
+
+      <article class="workspace-metric manager-dashboard-page__clickable" style="--metric-color: #f59e0b;" (click)="goToCandidatesByDomain()">
+        <span class="workspace-metric__label">En attente</span>
+        <p class="workspace-metric__value">{{ stats.unassigned || 0 }}</p>
+        <p class="workspace-metric__hint">Accès direct vers la liste des candidatures à traiter.</p>
+      </article>
+    </section>
+
+    <div class="workspace-grid workspace-grid--two">
+      <section class="workspace-card workspace-card--soft">
+        <div class="workspace-card__body">
+          <div class="workspace-card__header">
+            <div>
+              <h2>Répartition par domaine</h2>
+              <p>Visualisez la charge par domaine pour organiser le traitement.</p>
+            </div>
+          </div>
+
+          <div *ngIf="stats.byDomain?.length; else emptyDomains" class="workspace-list">
+            <div *ngFor="let d of stats.byDomain" class="workspace-row manager-dashboard-page__domain-row">
+              <div class="manager-dashboard-page__domain-meta">
+                <div class="workspace-row__title">{{ d.domain }}</div>
+                <div class="workspace-progress manager-dashboard-page__domain-progress">
+                  <span [style.width.%]="stats.total ? (d.count / stats.total) * 100 : 0"></span>
+                </div>
+              </div>
+              <span class="workspace-chip">{{ d.count }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="workspace-card">
+        <div class="workspace-card__body">
+          <div class="workspace-card__header">
+            <div>
+              <h3>Action rapide</h3>
+              <p>Ouvrez la liste des candidatures non affectées pour continuer le traitement.</p>
+            </div>
+          </div>
+
+          <div class="manager-dashboard-page__cta-block">
+            <p>
+              Les candidatures en attente nécessitent une analyse CV, une décision ou une planification d'entretien.
+            </p>
+            <button class="workspace-button workspace-button--primary" (click)="goToCandidatesByDomain()">
+              Ouvrir les candidatures à traiter
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <ng-template #emptyDomains>
+    <div class="workspace-empty">Aucune candidature par domaine pour le moment.</div>
+  </ng-template>
+</div>

@@ -1,0 +1,197 @@
+<div class="admin-settings-container">
+  <div class="settings-header">
+    <h1 class="settings-title">Paramètres Administrateur</h1>
+    <p class="settings-subtitle">Gestion des comptes managers</p>
+  </div>
+
+  <div class="settings-content">
+    <!-- Section modification mot de passe manager -->
+    <div class="settings-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="title-icon">
+            <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Modifier le mot de passe d'un Manager
+        </h2>
+      </div>
+
+      <div class="card-body">
+        <!-- Sélection du manager -->
+        <div class="form-section">
+          <label class="form-label">Sélectionner un Manager</label>
+          <div class="manager-dropdown">
+            <div class="dropdown-trigger" (click)="toggleManagersDropdown()" [class.active]="showManagersDropdown">
+              <span class="selected-manager">
+                {{ selectedManager ? selectedManager.email : 'Choisir un manager' }}
+              </span>
+              <svg class="dropdown-icon" [class.rotated]="showManagersDropdown" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <div class="dropdown-overlay" *ngIf="showManagersDropdown" (click)="showManagersDropdown = false"></div>
+
+            <div class="dropdown-panel" *ngIf="showManagersDropdown">
+              <div class="search-container">
+                <input
+                  type="text"
+                  placeholder="Rechercher un manager..."
+                  [(ngModel)]="managerSearch"
+                  (input)="filterManagers()"
+                  class="search-input"
+                >
+              </div>
+
+              <div class="dropdown-list">
+                <div
+                  *ngFor="let manager of filteredManagers"
+                  class="dropdown-item"
+                  [class.selected]="selectedManager?.id === manager.id"
+                  (click)="selectManager(manager)"
+                >
+                  <div class="manager-info">
+                    <span class="manager-name">{{ manager.firstname }} {{ manager.lastname }}</span>
+                    <span class="manager-email">{{ manager.email }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dropdown-empty" *ngIf="filteredManagers.length === 0">
+                Aucun manager trouvé
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire modification mot de passe -->
+        <form [formGroup]="passwordForm" (ngSubmit)="updateManagerPassword()" *ngIf="selectedManager" class="password-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Nouveau mot de passe</label>
+              <div class="password-input-container">
+                <input
+                  [type]="showNewPassword ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  class="form-input"
+                  placeholder="Saisir le nouveau mot de passe"
+                >
+                <button type="button" class="password-toggle" (click)="showNewPassword = !showNewPassword">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path *ngIf="!showNewPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle *ngIf="!showNewPassword" cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path *ngIf="showNewPassword" d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path *ngIf="showNewPassword" d="M1 1l22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="form-hint">
+                Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.
+              </div>
+              <div class="error-message" *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                <span *ngIf="passwordForm.get('newPassword')?.errors?.['required']">Le mot de passe est requis</span>
+                <span *ngIf="passwordForm.get('newPassword')?.errors?.['pattern']">Format de mot de passe invalide</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Confirmer le mot de passe</label>
+              <div class="password-input-container">
+                <input
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  class="form-input"
+                  placeholder="Confirmer le mot de passe"
+                >
+                <button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path *ngIf="!showConfirmPassword" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle *ngIf="!showConfirmPassword" cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path *ngIf="showConfirmPassword" d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path *ngIf="showConfirmPassword" d="M1 1l22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="error-message" *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched">
+                Les mots de passe ne correspondent pas
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="cancelUpdate()"
+              [disabled]="isLoading"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="passwordForm.invalid || isLoading"
+            >
+              <span *ngIf="!isLoading">Mettre à jour le mot de passe</span>
+              <span *ngIf="isLoading" class="loading-spinner"></span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Message de statut -->
+        <div class="status-message" *ngIf="statusMessage" [class.success]="isSuccess" [class.error]="!isSuccess">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path *ngIf="isSuccess" d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path *ngIf="isSuccess" d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path *ngIf="!isSuccess" d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path *ngIf="!isSuccess" d="M12 9v4M12 17h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {{ statusMessage }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des managers -->
+    <div class="settings-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="title-icon">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Liste des Managers
+        </h2>
+        <span class="managers-count">{{ managers.length }} manager(s)</span>
+      </div>
+
+      <div class="managers-list">
+        <div *ngFor="let manager of managers" class="manager-item">
+          <div class="manager-avatar">
+            {{ manager.firstname.charAt(0) }}{{ manager.lastname.charAt(0) }}
+          </div>
+          <div class="manager-details">
+            <div class="manager-name">{{ manager.firstname }} {{ manager.lastname }}</div>
+            <div class="manager-email">{{ manager.email }}</div>
+          </div>
+          <button
+            class="btn-edit"
+            (click)="selectManagerForEdit(manager)"
+            title="Modifier le mot de passe"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="empty-state" *ngIf="managers.length === 0">
+          <div class="empty-icon">👥</div>
+          <h4>Aucun manager trouvé</h4>
+          <p>Les managers créés apparaîtront ici</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

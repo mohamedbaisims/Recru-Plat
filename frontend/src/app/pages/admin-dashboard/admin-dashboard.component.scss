@@ -1,0 +1,32 @@
+@import '../../../styles/workspace-shell';
+
+.admin-dashboard-page {
+  &__alert {
+    margin-top: 24px;
+  }
+
+  &__status-grid {
+    margin-top: 0;
+  }
+
+  &__chart-list {
+    margin-top: 0;
+  }
+
+  &__chart-row {
+    align-items: center;
+  }
+
+  &__chart-meta {
+    flex: 1;
+  }
+
+  &__progress {
+    margin-top: 10px;
+  }
+
+  &__table-wrap {
+    overflow-x: auto;
+  }
+}
+

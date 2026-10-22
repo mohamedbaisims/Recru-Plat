@@ -1,0 +1,473 @@
+// ── Page shell ────────────────────────────────────────────────────────────────
+.form-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 100%);
+  padding: 40px 16px 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 780px;
+}
+
+// ── Stepper ───────────────────────────────────────────────────────────────────
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  gap: 0;
+
+  .stepper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+
+    .stepper-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    span {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+
+    &.active {
+      .stepper-circle {
+        background: linear-gradient(135deg, #6c63ff, #a78bfa);
+        color: #fff;
+        box-shadow: 0 4px 14px rgba(108, 99, 255, 0.4);
+      }
+      span { color: #6c63ff; font-weight: 600; }
+    }
+
+    &.done {
+      .stepper-circle {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: #fff;
+      }
+      span { color: #10b981; }
+    }
+  }
+
+  .stepper-line {
+    flex: 1;
+    height: 3px;
+    background: #e2e8f0;
+    margin: 0 8px;
+    margin-bottom: 26px;
+    border-radius: 2px;
+    transition: background 0.4s;
+    &.done { background: linear-gradient(90deg, #10b981, #34d399); }
+  }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.form-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(108, 99, 255, 0.08);
+  padding: 40px 40px 36px;
+
+  @media (max-width: 576px) { padding: 24px 20px; }
+}
+
+// ── Step header ───────────────────────────────────────────────────────────────
+.step-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  &.compact { text-align: left; margin-bottom: 20px; }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+  .step-sub {
+    color: #64748b;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+}
+
+.step-icon-wrap {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  &.success { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+}
+
+.step-icon {
+  font-size: 2rem;
+  color: #6c63ff;
+  .success & { color: #059669; }
+}
+
+// ── CV drop zone ──────────────────────────────────────────────────────────────
+.cv-drop-zone {
+  border: 2.5px dashed #c4b5fd;
+  border-radius: 16px;
+  background: #faf5ff;
+  padding: 48px 24px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #6c63ff;
+    background: #f0ebff;
+  }
+
+  &.has-file {
+    border-color: #10b981;
+    background: #f0fdf4;
+    border-style: solid;
+  }
+
+  .drop-content { pointer-events: none; }
+
+  .drop-icon {
+    font-size: 3rem;
+    color: #a78bfa;
+    transition: color 0.3s;
+    .has-file & { color: #10b981; }
+  }
+
+  .drop-title {
+    margin: 12px 0 4px;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 1rem;
+  }
+
+  .drop-hint {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+}
+
+// ── Analyze button ────────────────────────────────────────────────────────────
+.btn-analyze {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #6c63ff, #a78bfa);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 40px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 18px rgba(108, 99, 255, 0.35);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(108, 99, 255, 0.45);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.analyzing-text {
+  display: inline-flex;
+  align-items: center;
+}
+
+// ── OCR success banner ────────────────────────────────────────────────────────
+.ocr-success {
+  margin-top: 20px;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #065f46;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  animation: fadeInUp 0.4s ease;
+}
+
+// ── Section titles ────────────────────────────────────────────────────────────
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6c63ff;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ede9fe;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.req { color: #ef4444; }
+
+// ── Form controls ─────────────────────────────────────────────────────────────
+.form-control,
+.form-select {
+  border-radius: 10px;
+  border: 1.5px solid #e2e8f0;
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  transition: all 0.25s ease;
+
+  &:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+  }
+}
+
+textarea.form-control { resize: vertical; }
+
+// ── Document cards ────────────────────────────────────────────────────────────
+.doc-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 2px dashed #c4b5fd;
+  border-radius: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  background: #faf5ff;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #6c63ff;
+    background: #f0ebff;
+  }
+
+  &.has-file {
+    border-color: #10b981;
+    border-style: solid;
+    background: #f0fdf4;
+  }
+
+  i {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .doc-label {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.88rem;
+    margin: 0 0 4px;
+  }
+
+  .doc-file {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin: 0;
+    word-break: break-all;
+  }
+}
+
+// ── Step actions ──────────────────────────────────────────────────────────────
+.step-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+
+  &:hover:not(:disabled) {
+    border-color: #6c63ff;
+    color: #6c63ff;
+  }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-next {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(135deg, #6c63ff, #a78bfa);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(108, 99, 255, 0.3);
+
+  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+}
+
+.btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 14px 44px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 18px rgba(5, 150, 105, 0.35);
+
+  &:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(5, 150, 105, 0.45); }
+  &:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+}
+
+// ── Recap (step 3) ────────────────────────────────────────────────────────────
+.recap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+
+  .recap-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .recap-lbl {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .recap-val {
+    font-size: 0.92rem;
+    color: #1e293b;
+    font-weight: 500;
+    word-break: break-word;
+  }
+}
+
+.recap-files {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .recap-file-badge {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 0.85rem;
+    font-weight: 500;
+    word-break: break-all;
+
+    &.ok {
+      background: #d1fae5;
+      color: #065f46;
+    }
+  }
+}
+
+// ── Animation ─────────────────────────────────────────────────────────────────
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.form-card { animation: fadeInUp 0.35s ease; }
+
+
+.form-control, .form-select {
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+  &:focus {
+    border-color: #6c63ff;
+    box-shadow: 0 0 0 0.2rem rgba(108, 99, 255, 0.2);
+  }
+}
+
+.btn {
+  border-radius: 50px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+.progress {
+  border-radius: 50px;
+  overflow: hidden;
+}
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: #0d6efd;
+  color: white;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.upload-btn:hover {
+  background-color: #0b5ed7;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  color: #555;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}

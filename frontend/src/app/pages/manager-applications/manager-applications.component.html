@@ -1,0 +1,239 @@
+<!-- Message d'erreur -->
+<div *ngIf="errorMessage" class="alert-container">
+  <div class="alert alert-danger fade-in">
+    <div class="alert-content">
+      <span class="alert-icon">⚠️</span>
+      <span class="alert-text">{{ errorMessage }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Carte principale -->
+<mat-card class="modern-card">
+  <!-- En-tête de la carte -->
+  <div class="card-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-wrapper">
+          <span class="material-icons">assignment</span>
+        </div>
+        <div>
+          <h1 class="card-title">Liste des candidatures reçues</h1>
+          <p class="card-subtitle">Gérez et assignez les domaines aux candidats</p>
+        </div>
+      </div>
+      <div class="stats-badge">
+        <span class="stat-count">{{ applications.length || 0 }}</span>
+        <span class="stat-label">candidatures</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu du tableau -->
+  <div class="table-wrapper">
+    <div class="table-container">
+      <table mat-table [dataSource]="applications" matSort class="modern-table">
+
+        <!-- Nom complet -->
+        <ng-container matColumnDef="fullName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">person</span>
+              Nom complet
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell name-cell">
+            <div class="user-avatar">
+              <span class="avatar-icon">👤</span>
+            </div>
+            <span class="user-name">{{ app.fullName }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Adresse -->
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">location_on</span>
+              Adresse
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell">{{ app.address }}</td>
+        </ng-container>
+
+        <!-- Diplôme -->
+        <ng-container matColumnDef="diploma">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">school</span>
+              Diplôme
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell">{{ app.diploma }}</td>
+        </ng-container>
+
+        <!-- Expérience -->
+        <ng-container matColumnDef="experience">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">work</span>
+              Expérience
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell">
+            <span class="experience-badge">{{ app.experience }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Compétences techniques -->
+        <ng-container matColumnDef="technicalSkills">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">code</span>
+              Techniques
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell skills-cell">
+            <div class="skills-tags">
+              <span *ngFor="let skill of getSkillsArray(app.technicalSkills)"
+                    class="skill-tag technical-tag">
+                {{ skill }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Compétences personnelles -->
+        <ng-container matColumnDef="personalSkills">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">psychology</span>
+              Personnelles
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell skills-cell">
+            <div class="skills-tags">
+              <span *ngFor="let skill of getSkillsArray(app.personalSkills)"
+                    class="skill-tag personal-tag">
+                {{ skill }}
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Documents -->
+        <ng-container matColumnDef="documents">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">description</span>
+              Documents
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell documents-cell">
+            <div class="document-buttons">
+              <button
+                *ngIf="app.id"
+                (click)="openFile(app.id, 'cv')"
+                class="doc-btn cv-btn"
+                matTooltip="Voir le CV">
+                <span class="material-icons">picture_as_pdf</span>
+                CV
+              </button>
+
+              <button
+                *ngIf="app.id"
+                (click)="openFile(app.id, 'diploma')"
+                class="doc-btn diploma-btn"
+                matTooltip="Voir le diplôme">
+                <span class="material-icons">verified</span>
+                Diplôme
+              </button>
+
+              <button
+                *ngIf="app.id"
+                (click)="openFile(app.id, 'motivation')"
+                class="doc-btn letter-btn"
+                matTooltip="Voir la lettre de motivation">
+                <span class="material-icons">email</span>
+                Lettre
+              </button>
+            </div>
+
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="aiResult">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">smart_toy</span>
+              IA
+            </div>
+          </th>
+
+          <td mat-cell *matCellDef="let app" class="data-cell">
+            <div *ngIf="aiResults[app.id]; else noResult">
+              <div class="ai-badge">
+                🎯 Domaine suggéré: {{ aiResults[app.id].domaineSuggere || 'Aucun' }}
+              </div>
+            </div>
+
+            <ng-template #noResult>
+              <button class="analyze-btn" (click)="analyserCV(app)">
+                <span class="material-icons">auto_awesome</span>
+                Analyser le CV
+              </button>
+            </ng-template>
+          </td>
+        </ng-container>
+        <!-- Domaine -->
+        <ng-container matColumnDef="domainSelect">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">category</span>
+              Domaine
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell domain-cell">
+            <!-- Version avec select natif (temporaire) -->
+            <select [(ngModel)]="selectedDomains[app.id]" class="form-select form-select-sm domain-select-native">
+              <option [ngValue]="null">-- Sélectionner --</option>
+              <option *ngFor="let domain of workDomains" [value]="domain.id">
+                {{ domain.name }}
+              </option>
+            </select>
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">
+            <div class="column-header">
+              <span class="material-icons">settings</span>
+              Actions
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let app" class="data-cell actions-cell">
+            <button
+              class="save-btn"
+              (click)="assignDomain(app.id)"
+              [disabled]="!selectedDomains[app.id]"
+              [class.disabled]="!selectedDomains[app.id]">
+              <span class="material-icons">save</span>
+              Enregistrer
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Header et Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"></tr>
+      </table>
+    </div>
+
+    <!-- État vide -->
+    <div *ngIf="!applications || applications.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>Aucune candidature</h3>
+      <p>Aucune candidature n'a été reçue pour le moment.</p>
+    </div>
+  </div>
+</mat-card>

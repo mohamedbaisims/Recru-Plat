@@ -1,0 +1,106 @@
+<div class="workspace-page create-manager-page">
+  <section class="workspace-hero">
+    <div class="workspace-hero__content">
+      <div class="workspace-hero__text">
+        <span class="workspace-eyebrow">Administration ZimApply</span>
+        <h1 class="workspace-title">Créer un nouveau compte manager.</h1>
+        <p class="workspace-subtitle">
+          Ajoutez rapidement un responsable de recrutement avec un accès dédié à la consultation, au tri et à la gestion des candidatures.
+        </p>
+      </div>
+
+      <div class="workspace-hero__aside">
+        <div class="workspace-badge-card">
+          <strong>Accès dédié</strong>
+          <span>Compte manager prêt à être utilisé dès sa création.</span>
+        </div>
+        <div class="workspace-badge-card">
+          <strong>Gestion centralisée</strong>
+          <span>Création administrateur alignée avec le reste du back-office.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="workspace-grid workspace-grid--two">
+    <section class="workspace-card workspace-card--soft">
+      <div class="workspace-card__body">
+        <div class="workspace-card__header">
+          <div>
+            <h2>Informations du manager</h2>
+            <p>Renseignez les informations essentielles pour provisionner le nouveau compte.</p>
+          </div>
+        </div>
+
+        <div *ngIf="error" class="workspace-alert workspace-alert--error">
+          {{ error }}
+        </div>
+        <div *ngIf="message" class="workspace-alert workspace-alert--success">
+          {{ message }}
+        </div>
+
+        <form (ngSubmit)="createManager()" class="workspace-form">
+          <div class="workspace-form__grid">
+            <label class="workspace-field">
+              <span class="workspace-field__label">Prénom</span>
+              <input type="text" placeholder="Prénom du manager" [(ngModel)]="form.firstname" name="firstname" required />
+            </label>
+
+            <label class="workspace-field">
+              <span class="workspace-field__label">Nom</span>
+              <input type="text" placeholder="Nom du manager" [(ngModel)]="form.lastname" name="lastname" required />
+            </label>
+          </div>
+
+          <div class="workspace-form__grid">
+            <label class="workspace-field">
+              <span class="workspace-field__label">Adresse email</span>
+              <input type="email" placeholder="manager@zimapply.com" [(ngModel)]="form.email" name="email" required />
+            </label>
+
+            <label class="workspace-field">
+              <span class="workspace-field__label">Mot de passe initial</span>
+              <input type="password" placeholder="Choisissez un mot de passe robuste" [(ngModel)]="form.password" name="password" required />
+            </label>
+          </div>
+
+          <button type="submit" class="workspace-button workspace-button--primary">Créer le manager</button>
+        </form>
+      </div>
+    </section>
+
+    <aside class="workspace-card">
+      <div class="workspace-card__body">
+        <div class="workspace-card__header">
+          <div>
+            <h3>Bonnes pratiques</h3>
+            <p>Quelques repères pour garder une gestion propre des accès.</p>
+          </div>
+        </div>
+
+        <div class="workspace-kpi-list">
+          <div class="workspace-row">
+            <div>
+              <div class="workspace-row__title">Adresse professionnelle</div>
+              <div class="workspace-row__subtitle">Privilégier un email nominatif pour simplifier le suivi.</div>
+            </div>
+          </div>
+
+          <div class="workspace-row">
+            <div>
+              <div class="workspace-row__title">Mot de passe temporaire</div>
+              <div class="workspace-row__subtitle">Utiliser un mot de passe initial robuste avant la première connexion.</div>
+            </div>
+          </div>
+
+          <div class="workspace-row">
+            <div>
+              <div class="workspace-row__title">Activation immédiate</div>
+              <div class="workspace-row__subtitle">Le compte est prêt pour la gestion des candidatures dès la création.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
